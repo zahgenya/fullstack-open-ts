@@ -3,7 +3,7 @@ interface bmiValues {
   value2: number;
 }
 
-const parseArguments = (args: string[]): bmiValues => {
+const parseBmiArguments = (args: string[]): bmiValues => {
   if (args.length < 4) throw new Error("Not enough arguments");
   if (args.length > 4) throw new Error("Too many arguments");
 
@@ -31,7 +31,7 @@ const calculateBmi = (h: number, w: number) => {
 };
 
 try {
-  const { value1, value2 } = parseArguments(process.argv);
+  const { value1, value2 } = parseBmiArguments(process.argv);
   calculateBmi(value1, value2);
 } catch (error: unknown) {
   let errorMessage = "Something went wrong";
