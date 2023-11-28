@@ -14,10 +14,10 @@ interface exrValues {
 }
 
 const parseExerciseArgs = (args: string[]) => {
-  if (args.length < 3) throw new Error("Not enough arguments");
+  if (args.length < 4) throw new Error("Not enough arguments");
 
-  const value1 = Number(args[3]);
-  const value2 = args.slice(4).map(Number);
+  const value1 = Number(args[2]);
+  const value2 = args.slice(3).map(Number);
 
   if (value2.some(isNaN) || isNaN(value1)) {
     throw new Error("Invalid arguments");
@@ -54,26 +54,18 @@ const calculateExercises = (
 
   const getRating = (val: number, target: number): number => {
     const percentile = (val / target) * 100;
-    let score: number;
     if (percentile < 50) {
-      return (score = 1);
+      return (1);
     } else if (percentile >= 50 && percentile < 99) {
-      return (score = 2);
+      return (2);
     } else if (percentile >= 99) {
-      return (score = 3);
+      return (3);
     }
+
+    return 0;
   };
 
   const rating: number = getRating(getAvg(weekData), target);
-
-  console.log(
-    "val is: ",
-    getAvg(weekData),
-    "and target is: ",
-    target,
-    "OPERATION: ",
-    getRating(getAvg(weekData), target)
-  );
 
   let ratingDescription: string;
 
@@ -104,7 +96,7 @@ const calculateExercises = (
 
 try {
   const { value1, value2 } = parseExerciseArgs(process.argv);
-  calculateExercises(value1, value2);
+  console.log(calculateExercises(value1, value2));
 } catch (error: unknown) {
   let errorMessage = "Something went wrong";
   if (error instanceof Error) {
