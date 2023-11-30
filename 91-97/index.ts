@@ -35,7 +35,14 @@ interface errorResponse {
 
 app.post(
   "/exercises",
-  (req: express.Request<Record<string, never>, ResultInterface | errorResponse, ExerciseRequestInterface>, res: express.Response<ResultInterface | errorResponse>) => {
+  (
+    req: express.Request<
+      Record<string, never>,
+      ResultInterface | errorResponse,
+      ExerciseRequestInterface
+    >,
+    res: express.Response<ResultInterface | errorResponse>
+  ) => {
     const body = req.body;
 
     if (
@@ -48,10 +55,7 @@ app.post(
         .json({ error: "malformatted parameters" } as errorResponse);
     }
 
-    const exrResult = calculateExercises(
-      body.target,
-      body.daily_exercises
-    );
+    const exrResult = calculateExercises(body.target, body.daily_exercises);
 
     return res.json(exrResult);
   }
