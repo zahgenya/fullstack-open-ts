@@ -1,5 +1,5 @@
 export const calculateBmi = (h: number, w: number) => {
-  let hM = h / 100;
+  const hM = h / 100;
   const result = w / hM ** 2;
 
   if (result >= 18.5 && result <= 24.9) {

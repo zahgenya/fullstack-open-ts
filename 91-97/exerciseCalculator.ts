@@ -1,36 +1,18 @@
-interface ResultInterface {
+export interface ResultInterface {
   periodLength: number;
   trainingDays: number;
-  succes: boolean;
+  success: boolean;
   rating: number;
   ratingDescription: string;
   target: number;
   average: number;
 }
 
-interface exrValues {
-  value1: number;
-  value2: Array<number>;
-}
-
-const parseExerciseArgs = (args: string[]) => {
-  if (args.length < 4) throw new Error("Not enough arguments");
-
-  const value1 = Number(args[2]);
-  const value2 = args.slice(3).map(Number);
-
-  if (value2.some(isNaN) || isNaN(value1)) {
-    throw new Error("Invalid arguments");
-  }
-
-  return { value1, value2 };
-};
-
-const calculateExercises = (
+export const calculateExercises = (
   target: number,
   weekData: Array<number>
 ): ResultInterface => {
-  let trainingDays: Array<number> = [];
+  const trainingDays: Array<number> = [];
 
   for (let i = 0; i < weekData.length; i++) {
     if (weekData[i] > 0) {
@@ -39,7 +21,7 @@ const calculateExercises = (
   }
 
   function getAvg(arr: Array<number>): number {
-    return weekData.reduce((prev, value) => prev + value, 0) / weekData.length;
+    return arr.reduce((prev, value) => prev + value, 0) / weekData.length;
   }
 
   const isSucces = (averageHours: number, targetHours: number): boolean => {
@@ -86,21 +68,10 @@ const calculateExercises = (
   return {
     periodLength: weekData.length,
     trainingDays: trainingDays.length,
-    succes: succes,
+    success: succes,
     rating: rating,
     ratingDescription: ratingDescription,
     target: target,
     average: Math.round(getAvg(weekData) * 100) / 100,
   };
 };
-
-try {
-  const { value1, value2 } = parseExerciseArgs(process.argv);
-  console.log(calculateExercises(value1, value2));
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong";
-  if (error instanceof Error) {
-    errorMessage += " Error " + error.message;
-  }
-  console.log(errorMessage);
-}
