@@ -72,7 +72,7 @@ const App = () => {
                   <h2>
                     {part.name} {part.exerciseCount}
                   </h2>
-                  <p>{part.description}</p>
+                  {part.description && <p>{part.description}</p>}
                 </div>
               );
             case "group":
@@ -90,6 +90,7 @@ const App = () => {
                   <h2>
                     {part.name} {part.exerciseCount}
                   </h2>
+                  {part.description && <p>{part.description}</p>}
                   <p>{part.backgroundMaterial}</p>
                 </div>
               );
@@ -105,9 +106,9 @@ const App = () => {
   return (
     <div>
       <Header name={courseName}/>
-      <Content contentParts={courseParts} />
-      <Total contentParts={courseParts} />
+      {/* <Content contentParts={courseParts} /> */}
       <Part />
+      <Total contentParts={courseParts} />
     </div>
   );
 };
