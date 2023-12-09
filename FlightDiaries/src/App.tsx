@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Diary } from "./types";
 import { getAllDiaries, createDiary } from "./services/diaryService";
+import axios from "axios";
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [newDiary, setNewDiary] = useState({
-    date: '',
-    weather: '',
-    visibility: '',
-    comment: ''
+    date: "",
+    weather: "",
+    visibility: "",
+    comment: "",
   });
+  const [errMsg, setErrMsg] = useState<string | null>('')
 
   useEffect(() => {
     getAllDiaries().then((data) => {
@@ -17,26 +19,48 @@ const App = () => {
     });
   }, []);
 
-  const diaryCreation = (event: React.SyntheticEvent) => {
-    event.preventDefault()
+  const diaryCreation = async (event: React.SyntheticEvent) => {
+    event.preventDefault();
     const { date, weather, visibility, comment } = newDiary;
 
-    if (date && weather && visibility && comment) {
-      createDiary({ date, weather, visibility, comment }).then((data) => {
-        setDiaries(diaries.concat(data))
-      })
+    try {
+      const data = await createDiary({ date, weather, visibility, comment });
+      setDiaries(diaries.concat(data));
+      setNewDiary({
+        date: "",
+        weather: "",
+        visibility: "",
+        comment: "",
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.status);
+        console.error(error.response);
+        setErrMsg(error.message)
+        setTimeout(() => {
+          setErrMsg(null)
+        }, 5000)
+      } else {
+        console.error(error);
+      }
+    }
+  };
+
+  interface ErrNotificationProps {
+    message: string | null;
+  }
+
+  const ErrNotification: FC<ErrNotificationProps> = ({ message }) => {
+    if (message === null) {
+      return null
     }
 
-    setNewDiary({
-      date: '',
-      weather: '',
-      visibility: '',
-      comment: ''
-    })
+    return <div>{message}</div>
   }
 
   return (
     <>
+      <ErrNotification message={errMsg}/>
       <h1>Diary entries</h1>
       {diaries.map((diary: Diary) => (
         <div key={diary.id}>
@@ -50,9 +74,7 @@ const App = () => {
           </p>
         </div>
       ))}
-      <h1>
-        Add new entry
-      </h1>
+      <h1>Add new entry</h1>
       <form onSubmit={diaryCreation}>
         Date:
         <input
@@ -61,7 +83,8 @@ const App = () => {
           onChange={(event) =>
             setNewDiary({ ...newDiary, date: event.target.value })
           }
-        /><br />
+        />
+        <br />
         Weather:
         <input
           type="text"
@@ -69,7 +92,8 @@ const App = () => {
           onChange={(event) =>
             setNewDiary({ ...newDiary, weather: event.target.value })
           }
-        /><br />
+        />
+        <br />
         Visibility:
         <input
           type="text"
@@ -77,7 +101,8 @@ const App = () => {
           onChange={(event) =>
             setNewDiary({ ...newDiary, visibility: event.target.value })
           }
-        /><br />
+        />
+        <br />
         Comment:
         <input
           type="text"
@@ -85,8 +110,9 @@ const App = () => {
           onChange={(event) =>
             setNewDiary({ ...newDiary, comment: event.target.value })
           }
-        /><br />
-        <button type="submit">Submit</button>
+        />
+        <br />
+        <button type="submit">add</button>
       </form>
     </>
   );
