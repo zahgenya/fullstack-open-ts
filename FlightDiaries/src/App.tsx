@@ -78,7 +78,7 @@ const App = () => {
       <form onSubmit={diaryCreation}>
         Date:
         <input
-          type="text"
+          type="date"
           value={newDiary.date}
           onChange={(event) =>
             setNewDiary({ ...newDiary, date: event.target.value })
@@ -86,18 +86,70 @@ const App = () => {
         />
         <br />
         Weather:
+        sunny
         <input
-          type="text"
-          value={newDiary.weather}
+          type="radio"
+          value="sunny"
           onChange={(event) =>
             setNewDiary({ ...newDiary, weather: event.target.value })
           }
         />
+        rainy
+        <input
+          type="radio"
+          value="rainy"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, weather: event.target.value })
+          }
+        />
+        cloudy
+        <input
+          type="radio"
+          value="cloudy"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, weather: event.target.value })}
+          />
+        stormy
+        <input
+          type="radio"
+          value="stormy"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, weather: event.target.value })}
+          />
+        windy
+        <input
+          type="radio"
+          value="windy"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, weather: event.target.value })}
+          />
         <br />
         Visibility:
+        great
         <input
-          type="text"
-          value={newDiary.visibility}
+          type="radio"
+          value="great"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, visibility: event.target.value })
+          }
+        />good
+        <input
+          type="radio"
+          value="good"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, visibility: event.target.value })
+          }
+        />ok
+        <input
+          type="radio"
+          value="ok"
+          onChange={(event) =>
+            setNewDiary({ ...newDiary, visibility: event.target.value })
+          }
+        />poor
+        <input
+          type="radio"
+          value="poor"
           onChange={(event) =>
             setNewDiary({ ...newDiary, visibility: event.target.value })
           }
