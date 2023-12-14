@@ -1,4 +1,4 @@
-import { newPatientEntry, Gender, Entry } from "./types";
+import { newPatientEntry, Gender, Entry, newEntry } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -84,5 +84,9 @@ const toNewPatientEntry = (object: unknown): newPatientEntry => {
 
   throw new Error("Incorrect dataL: a field is missing");
 };
+
+const toNewEntry = (object: unknown): newEntry => {
+  
+}
 
 export default toNewPatientEntry;
