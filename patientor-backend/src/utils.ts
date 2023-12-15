@@ -1,7 +1,18 @@
-import { newPatientEntry, Gender, Entry, newEntry, Diagnosis } from "./types";
+import {
+  newPatientEntry,
+  Gender,
+  Entry,
+  Diagnosis,
+  HealthCheckRating,
+  newHealthCheckEntry,
+} from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
+};
+
+const isNumber = (digit: unknown): digit is number => {
+  return typeof digit === "number" || digit instanceof Number;
 };
 
 const parseName = (name: unknown): string => {
@@ -51,11 +62,11 @@ const parseOccupation = (occupation: unknown): string => {
 
 const parseEntry = (entry: unknown): Entry => {
   return entry as Entry;
-}
+};
 
 const parseEntries = (entries: unknown[]): Entry[] => {
   return entries.map(parseEntry);
-}
+};
 
 const toNewPatientEntry = (object: unknown): newPatientEntry => {
   if (!object || typeof object !== "object") {
@@ -70,55 +81,114 @@ const toNewPatientEntry = (object: unknown): newPatientEntry => {
     "occupation" in object &&
     "entries" in object
   ) {
-    const newEntry: newPatientEntry = {
+    const newEntryPatient: newPatientEntry = {
       name: parseName(object.name),
       dateOfBirth: parseDateOfBirth(object.dateOfBirth),
       ssn: parseSsn(object.ssn),
       gender: parseGender(object.gender),
       occupation: parseOccupation(object.occupation),
-      entries: parseEntries((object.entries as unknown[]) || [])
+      entries: parseEntries((object.entries as unknown[]) || []),
     };
 
-    return newEntry;
+    return newEntryPatient;
   }
 
-  throw new Error("Incorrect dataL: a field is missing");
+  throw new Error("Incorrect data: a field is missing");
 };
 
 const parseDescription = (description: unknown): string => {
   if (!isString(description)) {
-    throw new Error("Incorrect or missing description")
+    throw new Error("Incorrect or missing description");
   }
 
   return description;
-}
+};
 
 const parseDate = (date: unknown): string => {
   if (!isString(date)) {
-    throw new Error("Incorrect or missing date")
+    throw new Error("Incorrect or missing date");
   }
 
   return date;
-}
+};
 
 const parseSpecialist = (specialist: unknown): string => {
   if (!isString(specialist)) {
-    throw new Error("Incorrect or missing specialist")
+    throw new Error("Incorrect or missing specialist");
   }
 
   return specialist;
-}
+};
 
-const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> => {
-  if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
-    return [] as Array<Diagnosis['code']>;
+const parseDiagnosisCodes = (object: unknown): Array<Diagnosis["code"]> => {
+  if (!object || typeof object !== "object" || !("diagnosisCodes" in object)) {
+    return [] as Array<Diagnosis["code"]>;
   }
 
-  return object.diagnosisCodes as Array<Diagnosis['code']>;
-}
+  return object.diagnosisCodes as Array<Diagnosis["code"]>;
+};
 
-const toNewEntry = (object: unknown): newEntry => {
-  
-}
+// const parseType = (type: unknown): Entry['type'] => {
+//   if (
+//     type !== "OccupationalHealthcare" &&
+//     type !== "Hospital" &&
+//     type !== "HealthCheck"
+//   ) {
+//     throw new Error("Incorrect or missing type");
+//   }
 
-export default toNewPatientEntry;
+//   return type as Entry['type'];
+// };
+
+const parseHealthCheckRating = (
+  healthCheckRating: unknown
+): HealthCheckRating => {
+  if (!isNumber(healthCheckRating)) {
+    throw new Error("Incorrect or missing health check rating");
+  }
+
+  return healthCheckRating;
+};
+
+const toNewHealthCheckEntry = (object: unknown): newHealthCheckEntry => {
+  if (!object || typeof object !== "object") {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if (
+    "date" in object &&
+    "specialist" in object &&
+    "type" in object &&
+    "healthCheckRating"
+  ) {
+    if (object.type !== "HealthCheck") {
+      throw new Error("Incorrect or missing type");
+    }
+
+    const newEntryObj: newHealthCheckEntry = {
+      date: parseDate(object.date),
+      specialist: parseSpecialist(object.specialist),
+      type: "HealthCheck",
+    };
+
+    if ("healthCheckRating" in object) {
+      newEntryObj.healthCheckRating = parseHealthCheckRating(
+        object.healthCheckRating
+      );
+    }
+
+    if ("description" in object) {
+      newEntryObj.description = parseDescription(object.description);
+    }
+
+    if ("diagnosisCodes" in object) {
+      newEntryObj.diagnosisCodes = parseDiagnosisCodes(object.diagnosisCodes);
+    }
+
+    return newEntryObj;
+  }
+
+  throw new Error("Incorrect data: a field is missing");
+};
+
+export { toNewPatientEntry, toNewHealthCheckEntry };
