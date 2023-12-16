@@ -5,6 +5,10 @@ import {
   Diagnosis,
   HealthCheckRating,
   newHealthCheckEntry,
+  newHospitalEntry,
+  IDischarge,
+  newOccupationalEntry,
+  sickLeave,
 } from "./types";
 
 const isString = (text: unknown): text is string => {
@@ -150,6 +154,68 @@ const parseHealthCheckRating = (
   return healthCheckRating;
 };
 
+const parseCriteria = (criteria: unknown): string => {
+  if (!isString(criteria)) {
+    throw new Error("Incorrect or missing criteria");
+  }
+
+  return criteria;
+};
+
+const parseDischarge = (discharge: unknown): IDischarge => {
+  if (!discharge || typeof discharge !== "object") {
+    throw new Error("Incorrect or missing discharge data");
+  }
+
+  if ("date" in discharge && "criteria" in discharge) {
+    return {
+      date: parseDate(discharge.date),
+      criteria: parseCriteria(discharge.criteria),
+    };
+  }
+
+  throw new Error("Incorrect or missing discharge data");
+};
+
+const parseEmployerName = (employerName: unknown): string => {
+  if (!isString(employerName)) {
+    throw new Error("Incorrect or missing employer name");
+  }
+
+  return employerName;
+};
+
+const parseStartDate = (startDate: unknown): string => {
+  if (!isString(startDate)) {
+    throw new Error("Incorrect or missing start date");
+  }
+
+  return startDate;
+};
+
+const parseEndDate = (endDate: unknown): string => {
+  if (!isString(endDate)) {
+    throw new Error("Incorrect or missing end date");
+  }
+
+  return endDate;
+};
+
+const parseSickLeave = (sickLeave: unknown): sickLeave => {
+  if (!sickLeave || typeof sickLeave !== "object") {
+    throw new Error("Incorrect or missing sick leave");
+  }
+
+  if ("startDate" in sickLeave && "endDate" in sickLeave) {
+    return {
+      startDate: parseStartDate(sickLeave.startDate),
+      endDate: parseEndDate(sickLeave.endDate),
+    };
+  }
+
+  throw new Error("Incorrect or missing sick leave data");
+};
+
 const toNewHealthCheckEntry = (object: unknown): newHealthCheckEntry => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data");
@@ -191,4 +257,85 @@ const toNewHealthCheckEntry = (object: unknown): newHealthCheckEntry => {
   throw new Error("Incorrect data: a field is missing");
 };
 
-export { toNewPatientEntry, toNewHealthCheckEntry };
+const toNewHospitalEntry = (object: unknown): newHospitalEntry => {
+  if (!object || typeof object !== "object") {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if ("date" in object && "specialist" in object && "type" in object) {
+    if (object.type !== "Hospital") {
+      throw new Error("Incorrect or missing type");
+    }
+
+    const newHospitalObj: newHospitalEntry = {
+      date: parseDate(object.date),
+      specialist: parseSpecialist(object.specialist),
+      type: "Hospital",
+    };
+
+    if ("description" in object) {
+      newHospitalObj.description = parseDescription(object.description);
+    }
+
+    if ("diagnosisCodes" in object) {
+      newHospitalObj.diagnosisCodes = parseDiagnosisCodes(
+        object.diagnosisCodes
+      );
+    }
+
+    if ("discharge" in object) {
+      newHospitalObj.discharge = parseDischarge(object.discharge);
+    }
+
+    return newHospitalObj;
+  }
+
+  throw new Error("Incorrect data: a field is missing");
+};
+
+const toNewOccupationalEntry = (object: unknown): newOccupationalEntry => {
+  if (!object || typeof object !== "object") {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if ("date" in object && "specialist" in object && "type" in object) {
+    if (object.type !== "OccupationalHealthcare") {
+      throw new Error("Incorrect or missing type");
+    }
+
+    const newOccupationalObj: newOccupationalEntry = {
+      date: parseDate(object.date),
+      specialist: parseSpecialist(object.specialist),
+      type: "OccupationalHealthcare",
+    };
+
+    if ("description" in object) {
+      newOccupationalObj.description = parseDescription(object.description);
+    }
+
+    if ("diagnosisCodes" in object) {
+      newOccupationalObj.diagnosisCodes = parseDiagnosisCodes(
+        object.diagnosisCodes
+      );
+    }
+
+    if ("employerName" in object) {
+      newOccupationalObj.employerName = parseEmployerName(object.employerName);
+    }
+
+    if ("sickLeave" in object) {
+      newOccupationalObj.sickLeave = parseSickLeave(object.sickLeave);
+    }
+
+    return newOccupationalObj;
+  }
+
+  throw new Error("Incorrect data: a field is missing");
+};
+
+export {
+  toNewPatientEntry,
+  toNewHealthCheckEntry,
+  toNewHospitalEntry,
+  toNewOccupationalEntry,
+};

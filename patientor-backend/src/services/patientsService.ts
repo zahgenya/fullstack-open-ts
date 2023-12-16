@@ -1,6 +1,6 @@
 import patientData from '../../data/patients';
 
-import { nonSensitivePatientEntry, patientEntry, newPatientEntry, Entry, newEntry } from '../types';
+import { nonSensitivePatientEntry, patientEntry, newPatientEntry, Entry, newEntry, newHealthCheckEntry, HealthCheckEntry, newHospitalEntry, HospitalEntry, newOccupationalEntry, OccupationHealthcareEntry } from '../types';
 
 import { v1 as uuid } from 'uuid';
 
@@ -43,6 +43,42 @@ const addEntry = (entry: newEntry, id: string): Entry => {
   return newEntry;
 }
 
+const addHealthCheckEntry = (entry: newHealthCheckEntry, id: string): HealthCheckEntry => {
+  const newEntry = {
+    id: uuid(),
+    ...entry
+  }
+
+  const selectedPatient = patients.find(p => p.id === id);
+
+  selectedPatient?.entries.push(newEntry);
+  return newEntry
+}
+
+const addHospitalEntry = (entry: newHospitalEntry, id: string): HospitalEntry => {
+  const newEntry = {
+    id: uuid(),
+    ...entry
+  }
+
+  const selectedPatient = patients.find(p => p.id === id);
+
+  selectedPatient?.entries.push(newEntry);
+  return newEntry
+}
+
+const addOccupationalEntry = (entry: newOccupationalEntry, id: string): OccupationHealthcareEntry => {
+  const newEntry = {
+    id: uuid(),
+    ...entry
+  }
+
+  const selectedPatient = patients.find(p => p.id === id)
+  
+  selectedPatient?.entries.push(newEntry);
+  return newEntry
+}
+
 const findPatientById = (id: string): nonSensitivePatientEntry | undefined => {
   const entry = patients.find(p => p.id === id);
   return entry;
@@ -53,7 +89,10 @@ export default {
   addPatient,
   findPatientById,
   getPatientsEntry,
-  addEntry
+  addEntry,
+  addHealthCheckEntry,
+  addHospitalEntry,
+  addOccupationalEntry
 };
 
 
